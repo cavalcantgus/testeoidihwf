@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nova Solicitação</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <script src="https://alcdn.msauth.net/browser/2.30.0/js/msal-browser.min.js"></script>
+  <style>
+    :root {
+      --bg: #0d0f14;
+      --surface: #13161d;
+      --surface2: #1a1e28;
+      --border: #252a38;
+      --accent: #4f7cff;
+      --accent2: #8b5cf6;
+      --text: #e8eaf0;
+      --muted: #6b7280;
+      --high: #ef4444;
+      --med: #f59e0b;
+      --low: #22c55e;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -30%;
+      left: -20%;
+      width: 60%;
+      height: 60%;
+      background: radial-gradient(ellipse, rgba(79,124,255,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -20%;
+      right: -10%;
+      width: 50%;
+      height: 50%;
+      background: radial-gradient(ellipse, rgba(139,92,246,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 560px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2.5rem;
+      position: relative;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-header { margin-bottom: 2rem; }
+
+    .badge {
+      display: inline-block;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(79,124,255,0.1);
+      border: 1px solid rgba(79,124,255,0.25);
+      padding: 0.3rem 0.75rem;
+      border-radius: 99px;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 800;
+      line-height: 1.2;
+      background: linear-gradient(135deg, #e8eaf0 0%, #8b9ab8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Login */
+    #loginScreen { text-align: center; padding: 1rem 0; }
+    #loginScreen p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .btn-ms {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: #1f2330;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      padding: 0.85rem 1.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+      justify-content: center;
+    }
+    .btn-ms:hover { background: #272d3e; border-color: var(--accent); }
+
+    /* User bar */
+    #userBar {
+      display: none;
+      align-items: center;
+      gap: 0.75rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.65rem 1rem;
+      margin-bottom: 1.5rem;
+    }
+    #userBar.visible { display: flex; }
+
+    .user-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .user-info { flex: 1; min-width: 0; }
+    .user-name  { font-size: 0.88rem; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .user-email { font-size: 0.75rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .btn-logout {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 0.75rem;
+      cursor: pointer;
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      transition: color 0.2s;
+      white-space: nowrap;
+    }
+    .btn-logout:hover { color: var(--high); }
+
+    /* Form */
+    #formScreen { display: none; }
+    #formScreen.visible { display: block; }
+
+    .field {
+      margin-bottom: 1.4rem;
+      animation: fadeUp 0.4s ease both;
+    }
+    .field:nth-child(1) { animation-delay: 0.05s; }
+    .field:nth-child(2) { animation-delay: 0.10s; }
+    .field:nth-child(3) { animation-delay: 0.15s; }
+    .field:nth-child(4) { animation-delay: 0.20s; }
+
+    label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      padding: 0.75rem 1rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      appearance: none;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(79,124,255,0.12);
+    }
+
+    textarea { resize: vertical; min-height: 100px; }
+
+    .select-wrap { position: relative; }
+    .select-wrap::after {
+      content: '▾';
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+    }
+    select option { background: var(--surface2); }
+
+    .priority-pills { display: flex; gap: 0.6rem; }
+    .pill input[type="radio"] { display: none; }
+    .pill label {
+      display: block;
+      padding: 0.55rem 1.2rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      transition: all 0.18s ease;
+      margin: 0;
+      white-space: nowrap;
+    }
+    .pill.alta input:checked + label  { border-color: var(--high); color: var(--high); background: rgba(239,68,68,0.1); }
+    .pill.media input:checked + label { border-color: var(--med);  color: var(--med);  background: rgba(245,158,11,0.1); }
+    .pill.baixa input:checked + label { border-color: var(--low);  color: var(--low);  background: rgba(34,197,94,0.1); }
+    .pill.alta label:hover  { border-color: var(--high); color: var(--high); }
+    .pill.media label:hover { border-color: var(--med);  color: var(--med); }
+    .pill.baixa label:hover { border-color: var(--low);  color: var(--low); }
+
+    .btn {
+      width: 100%;
+      margin-top: 0.5rem;
+      padding: 0.9rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.75rem 1.5rem;
+      font-size: 0.9rem;
+      opacity: 0;
+      transition: all 0.3s ease;
+      pointer-events: none;
+      z-index: 100;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.success { border-color: var(--low); color: var(--low); }
+    .toast.error   { border-color: var(--high); color: var(--high); }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="badge">Nova Solicitação</div>
+      <h1>Abertura de<br/>Chamado</h1>
+    </div>
+
+    <!-- Tela de login -->
+    <div id="loginScreen">
+      <p>Faça login com sua conta Microsoft<br/>para registrar a solicitação.</p>
+      <button class="btn-ms" onclick="fazerLogin()">
+        <svg width="20" height="20" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="1" width="9" height="9" fill="#F25022"/>
+          <rect x="11" y="1" width="9" height="9" fill="#7FBA00"/>
+          <rect x="1" y="11" width="9" height="9" fill="#00A4EF"/>
+          <rect x="11" y="11" width="9" height="9" fill="#FFB900"/>
+        </svg>
+        Entrar com Microsoft
+      </button>
+    </div>
+
+    <!-- Barra do usuário logado -->
+    <div id="userBar">
+      <div class="user-avatar" id="userAvatar">?</div>
+      <div class="user-info">
+        <div class="user-name"  id="userName">—</div>
+        <div class="user-email" id="userEmail">—</div>
+      </div>
+      <button class="btn-logout" onclick="fazerLogout()">Sair</button>
+    </div>
+
+    <!-- Formulário -->
+    <div id="formScreen">
+      <div class="field">
+        <label for="titulo">Título</label>
+        <input type="text" id="titulo" placeholder="Ex: Problema no sistema de acesso" />
+      </div>
+
+      <div class="field">
+        <label for="setor">Setor</label>
+        <div class="select-wrap">
+          <select id="setor">
+            <option value="" disabled selected>Selecione o setor</option>
+            <option>Administrativo</option>
+            <option>Financeiro</option>
+            <option>RH</option>
+            <option>Marketing</option>
+            <option>Comercial</option>
+            <option>Acadêmico</option>
+            <option>Jurídico</option>
+            <option>Contábil</option>
+            <option>Tecnologia</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="descricao">Descrição</label>
+        <textarea id="descricao" placeholder="Descreva o problema ou solicitação em detalhes..."></textarea>
+      </div>
+
+      <div class="field">
+        <label>Prioridade</label>
+        <div class="priority-pills">
+          <div class="pill alta">
+            <input type="radio" name="prioridade" id="alta" value="Alta"/>
+            <label for="alta">Alta</label>
+          </div>
+          <div class="pill media">
+            <input type="radio" name="prioridade" id="media" value="Média"/>
+            <label for="media">Média</label>
+          </div>
+          <div class="pill baixa">
+            <input type="radio" name="prioridade" id="baixa" value="Baixa"/>
+            <label for="baixa">Baixa</label>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn" id="submitBtn" onclick="enviar()">Enviar Solicitação</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ── Configuração ──────────────────────────────────────
+    const CLIENT_ID = "1eb12022-5dbd-47ec-96be-34b8dcb8f9d8";
+    const TENANT_ID = "78908a2f-bf13-4474-af32-dfe822c76646";
+    const WEBHOOK   = "https://n8n-ho4040ks04wssoockc080gc8.coolify.mmcinfra.com/webhook-test/6eefe7c9-7729-464c-84d5-ac2ae7f6b741";
+    const SCOPES    = ["User.Read", "https://graph.microsoft.com/Sites.ReadWrite.All"];
+    // ─────────────────────────────────────────────────────
+
+    const msalInstance = new msal.PublicClientApplication({
+      auth: {
+        clientId: CLIENT_ID,
+        authority: `https://login.microsoftonline.com/${TENANT_ID}`,
+        redirectUri: window.location.href.split('?')[0]
+      },
+      cache: { cacheLocation: "sessionStorage" }
+    });
+
+    let usuarioAtual = null;
+
+    // Recupera sessão existente ao carregar
+    msalInstance.handleRedirectPromise().then(() => {
+      const accounts = msalInstance.getAllAccounts();
+      if (accounts.length > 0) {
+        usuarioAtual = accounts[0];
+        mostrarUsuario(usuarioAtual);
+      }
+    });
+
+    async function fazerLogin() {
+      try {
+        const resp = await msalInstance.loginPopup({ scopes: SCOPES });
+        usuarioAtual = resp.account;
+        mostrarUsuario(usuarioAtual);
+      } catch (e) {
+        showToast("❌ Login cancelado ou falhou.", "error");
+      }
+    }
+
+    function fazerLogout() {
+      msalInstance.logoutPopup({ account: usuarioAtual });
+      usuarioAtual = null;
+      document.getElementById("userBar").classList.remove("visible");
+      document.getElementById("formScreen").classList.remove("visible");
+      document.getElementById("loginScreen").style.display = "block";
+    }
+
+    function mostrarUsuario(account) {
+      const nome     = account.name || account.username;
+      const email    = account.username;
+      const initials = nome.split(" ").map(n => n[0]).slice(0, 2).join("").toUpperCase();
+
+      document.getElementById("userAvatar").textContent = initials;
+      document.getElementById("userName").textContent   = nome;
+      document.getElementById("userEmail").textContent  = email;
+      document.getElementById("userBar").classList.add("visible");
+      document.getElementById("loginScreen").style.display = "none";
+      document.getElementById("formScreen").classList.add("visible");
+    }
+
+    async function getToken() {
+      try {
+        const resp = await msalInstance.acquireTokenSilent({ scopes: SCOPES, account: usuarioAtual });
+        return resp.accessToken;
+      } catch {
+        const resp = await msalInstance.acquireTokenPopup({ scopes: SCOPES });
+        return resp.accessToken;
+      }
+    }
+
+    function showToast(msg, type) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = `toast ${type} show`;
+      setTimeout(() => t.className = 'toast', 3000);
+    }
+
+    async function enviar() {
+      const titulo     = document.getElementById('titulo').value.trim();
+      const setor      = document.getElementById('setor').value;
+      const descricao  = document.getElementById('descricao').value.trim();
+      const prioridade = document.querySelector('input[name="prioridade"]:checked')?.value;
+
+      if (!titulo || !setor || !descricao || !prioridade) {
+        showToast('⚠️ Preencha todos os campos.', 'error');
+        return;
+      }
+
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.textContent = 'Enviando...';
+
+      try {
+        const token = await getToken();
+
+        await fetch(WEBHOOK, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            titulo,
+            setor,
+            descricao,
+            prioridade,
+            token,                          // token do usuário real
+            nome:  usuarioAtual?.name     || "",
+            email: usuarioAtual?.username || ""
+          })
+        });
+
+        showToast('✅ Solicitação enviada com sucesso!', 'success');
+        document.getElementById('titulo').value = '';
+        document.getElementById('setor').value  = '';
+        document.getElementById('descricao').value = '';
+        document.querySelectorAll('input[name="prioridade"]').forEach(r => r.checked = false);
+
+      } catch (err) {
+        showToast('❌ Erro ao enviar. Tente novamente.', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Enviar Solicitação';
+      }
+    }
+  </script>
+</body>
+</html>
