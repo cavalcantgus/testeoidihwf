@@ -392,6 +392,7 @@
       auth: {
         clientId: CLIENT_ID,
         authority: `https://login.microsoftonline.com/${TENANT_ID}`,
+        // CORREÇÃO: usa origin + pathname para evitar problemas com hash/query no GitHub Pages
         redirectUri: window.location.origin + window.location.pathname
       },
       cache: { cacheLocation: "sessionStorage" }
@@ -406,6 +407,8 @@
         usuarioAtual = accounts[0];
         mostrarUsuario(usuarioAtual);
       }
+    }).catch(err => {
+      console.error("Erro ao recuperar sessão:", err);
     });
 
     async function fazerLogin() {
@@ -414,6 +417,7 @@
         usuarioAtual = resp.account;
         mostrarUsuario(usuarioAtual);
       } catch (e) {
+        console.error("Erro no login:", e);
         showToast("❌ Login cancelado ou falhou.", "error");
       }
     }
@@ -482,7 +486,7 @@
             setor,
             descricao,
             prioridade,
-            token,                          // token do usuário real
+            token,
             nome:  usuarioAtual?.name     || "",
             email: usuarioAtual?.username || ""
           })
@@ -495,6 +499,7 @@
         document.querySelectorAll('input[name="prioridade"]').forEach(r => r.checked = false);
 
       } catch (err) {
+        console.error("Erro ao enviar:", err);
         showToast('❌ Erro ao enviar. Tente novamente.', 'error');
       } finally {
         btn.disabled = false;
