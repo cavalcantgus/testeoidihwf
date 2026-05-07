@@ -915,6 +915,12 @@
       }
     ];
 
+    selectedSector.innerHTML = `
+      <option value="" disabled selected>
+        Selecione
+      </option>
+    `;
+    
     setores.forEach(item => {
       const option = document.createElement("option");
 
