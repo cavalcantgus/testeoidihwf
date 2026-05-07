@@ -3,363 +3,571 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Nova Solicitação</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <title>Abertura de Chamado</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
   <script src="https://alcdn.msauth.net/browser/2.30.0/js/msal-browser.min.js"></script>
   <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
     :root {
-      --bg: #0d0f14;
-      --surface: #13161d;
-      --surface2: #1a1e28;
-      --border: #252a38;
-      --accent: #4f7cff;
-      --accent2: #8b5cf6;
-      --text: #e8eaf0;
-      --muted: #6b7280;
-      --high: #ef4444;
-      --med: #f59e0b;
-      --low: #22c55e;
+      --blue:    #0078D4;
+      --blue-dk: #005A9E;
+      --blue-lt: #EBF3FB;
+      --white:   #FFFFFF;
+      --gray-0:  #F8F9FA;
+      --gray-1:  #E9ECEF;
+      --gray-2:  #CED4DA;
+      --gray-3:  #868E96;
+      --gray-4:  #495057;
+      --black:   #1A1A1A;
+      --red:     #D13438;
+      --green:   #107C10;
+      --amber:   #CA5010;
+      --font:    'IBM Plex Sans', sans-serif;
+      --mono:    'IBM Plex Mono', monospace;
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      background: var(--gray-0);
+      font-family: var(--font);
+      color: var(--black);
+      -webkit-font-smoothing: antialiased;
+    }
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
+    /* ── LAYOUT ─────────────────────────────────────────── */
+    .page {
       min-height: 100vh;
+      display: flex;
+      align-items: stretch;
+    }
+
+    /* ── LOGIN SCREEN ───────────────────────────────────── */
+    #loginScreen {
+      display: flex;
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    .login-left {
+      flex: 1;
+      background: var(--blue);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-left::before {
+      content: '';
+      position: absolute;
+      bottom: -80px;
+      right: -80px;
+      width: 320px;
+      height: 320px;
+      border: 40px solid rgba(255,255,255,0.07);
+    }
+
+    .login-left::after {
+      content: '';
+      position: absolute;
+      top: 40px;
+      right: 60px;
+      width: 160px;
+      height: 160px;
+      border: 20px solid rgba(255,255,255,0.05);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      background: white;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 2rem 1rem;
-      overflow-x: hidden;
     }
 
-    body::before {
-      content: '';
-      position: fixed;
-      top: -30%;
-      left: -20%;
-      width: 60%;
-      height: 60%;
-      background: radial-gradient(ellipse, rgba(79,124,255,0.08) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    body::after {
-      content: '';
-      position: fixed;
-      bottom: -20%;
-      right: -10%;
-      width: 50%;
-      height: 50%;
-      background: radial-gradient(ellipse, rgba(139,92,246,0.07) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .card {
-      width: 100%;
-      max-width: 560px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 2.5rem;
-      position: relative;
-      animation: fadeUp 0.5s ease both;
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .card-header { margin-bottom: 2rem; }
-
-    .badge {
-      display: inline-block;
-      font-family: 'Syne', sans-serif;
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.15em;
+    .brand-name {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--accent);
-      background: rgba(79,124,255,0.1);
-      border: 1px solid rgba(79,124,255,0.25);
-      padding: 0.3rem 0.75rem;
-      border-radius: 99px;
+      color: rgba(255,255,255,0.9);
+    }
+
+    .login-hero {
+      position: relative;
+      z-index: 1;
+    }
+
+    .login-hero h2 {
+      font-size: 2rem;
+      font-weight: 300;
+      color: white;
+      line-height: 1.3;
       margin-bottom: 1rem;
     }
 
-    h1 {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.75rem;
-      font-weight: 800;
-      line-height: 1.2;
-      background: linear-gradient(135deg, #e8eaf0 0%, #8b9ab8 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    .login-hero h2 strong {
+      font-weight: 600;
+      display: block;
     }
 
-    /* Login */
-    #loginScreen { text-align: center; padding: 1rem 0; }
-    #loginScreen p {
-      color: var(--muted);
-      font-size: 0.9rem;
-      margin-bottom: 1.5rem;
-      line-height: 1.6;
+    .login-hero p {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.7;
+      max-width: 280px;
     }
 
-    .btn-ms {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.75rem;
-      background: #1f2330;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.95rem;
-      font-weight: 500;
-      padding: 0.85rem 1.5rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      width: 100%;
+    .login-right {
+      width: 420px;
+      flex-shrink: 0;
+      background: white;
+      display: flex;
+      flex-direction: column;
       justify-content: center;
+      padding: 3.5rem;
     }
-    .btn-ms:hover { background: #272d3e; border-color: var(--accent); }
-    .btn-ms:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* User bar */
-    #userBar {
-      display: none;
+    .login-right h1 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--black);
+      margin-bottom: 0.4rem;
+    }
+
+    .login-right .subtitle {
+      font-size: 0.85rem;
+      color: var(--gray-3);
+      margin-bottom: 2.5rem;
+      line-height: 1.5;
+    }
+
+    .ms-btn {
+      display: flex;
       align-items: center;
-      gap: 0.75rem;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 0.65rem 1rem;
-      margin-bottom: 1.5rem;
+      gap: 0;
+      background: white;
+      border: 1px solid var(--gray-2);
+      cursor: pointer;
+      font-family: var(--font);
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--gray-4);
+      transition: border-color 0.15s, box-shadow 0.15s;
+      width: 100%;
+      padding: 0;
+      overflow: hidden;
     }
-    #userBar.visible { display: flex; }
 
-    .user-avatar {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
+    .ms-btn:hover {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 1px var(--blue);
+    }
+
+    .ms-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .ms-btn-icon {
+      width: 44px;
+      height: 44px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: 'Syne', sans-serif;
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: #fff;
+      background: var(--gray-0);
+      border-right: 1px solid var(--gray-1);
       flex-shrink: 0;
     }
 
-    .user-info { flex: 1; min-width: 0; }
-    .user-name  { font-size: 0.88rem; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .user-email { font-size: 0.75rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ms-btn-text {
+      flex: 1;
+      text-align: center;
+      padding: 0 1rem;
+    }
+
+    .login-footer {
+      margin-top: 2.5rem;
+      font-size: 0.75rem;
+      color: var(--gray-3);
+      line-height: 1.6;
+    }
+
+    .login-footer a { color: var(--blue); text-decoration: none; }
+
+    /* ── FORM SCREEN ────────────────────────────────────── */
+    #formScreen {
+      display: none;
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    #formScreen.visible { display: flex; }
+
+    .form-sidebar {
+      width: 260px;
+      flex-shrink: 0;
+      background: var(--blue);
+      padding: 2.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .form-sidebar .brand-name { color: rgba(255,255,255,0.85); }
+
+    .sidebar-meta {
+      margin-top: auto;
+    }
+
+    .sidebar-meta .label {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 0.35rem;
+    }
+
+    .user-chip {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .avatar {
+      width: 30px;
+      height: 30px;
+      background: rgba(255,255,255,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: white;
+      flex-shrink: 0;
+      font-family: var(--mono);
+    }
+
+    .user-chip-info { min-width: 0; }
+    .user-chip-name  { font-size: 0.82rem; font-weight: 500; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .user-chip-email { font-size: 0.7rem; color: rgba(255,255,255,0.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
     .btn-logout {
+      margin-top: 0.75rem;
       background: none;
-      border: none;
-      color: var(--muted);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.6);
+      font-family: var(--font);
       font-size: 0.75rem;
+      padding: 0.4rem 0.8rem;
       cursor: pointer;
-      padding: 0.25rem 0.5rem;
-      border-radius: 6px;
-      transition: color 0.2s;
-      white-space: nowrap;
+      transition: all 0.15s;
+      width: 100%;
+      text-align: left;
     }
-    .btn-logout:hover { color: var(--high); }
+    .btn-logout:hover { background: rgba(255,255,255,0.08); color: white; border-color: rgba(255,255,255,0.4); }
 
-    /* Form */
-    #formScreen { display: none; }
-    #formScreen.visible { display: block; }
-
-    .field {
-      margin-bottom: 1.4rem;
-      animation: fadeUp 0.4s ease both;
+    .form-main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 3rem 3.5rem;
+      background: var(--white);
     }
-    .field:nth-child(1) { animation-delay: 0.05s; }
-    .field:nth-child(2) { animation-delay: 0.10s; }
-    .field:nth-child(3) { animation-delay: 0.15s; }
-    .field:nth-child(4) { animation-delay: 0.20s; }
 
-    label {
-      display: block;
-      font-size: 0.78rem;
-      font-weight: 500;
-      letter-spacing: 0.05em;
+    .form-header {
+      border-bottom: 1px solid var(--gray-1);
+      padding-bottom: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .form-header .tag {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--blue);
       text-transform: uppercase;
-      color: var(--muted);
+      letter-spacing: 0.1em;
       margin-bottom: 0.5rem;
     }
 
-    input, select, textarea {
+    .form-header h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--black);
+    }
+
+    .form-header p {
+      font-size: 0.83rem;
+      color: var(--gray-3);
+      margin-top: 0.3rem;
+    }
+
+    .field { margin-bottom: 1.5rem; }
+
+    .field label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--gray-4);
+      margin-bottom: 0.4rem;
+      letter-spacing: 0.01em;
+    }
+
+    .field label .req { color: var(--blue); margin-left: 2px; }
+
+    input[type="text"], select, textarea {
       width: 100%;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.95rem;
-      padding: 0.75rem 1rem;
+      background: var(--white);
+      border: 1px solid var(--gray-2);
+      border-radius: 0;
+      color: var(--black);
+      font-family: var(--font);
+      font-size: 0.9rem;
+      padding: 0.65rem 0.85rem;
       outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      transition: border-color 0.15s;
       appearance: none;
     }
 
-    input:focus, select:focus, textarea:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(79,124,255,0.12);
+    input[type="text"]:focus, select:focus, textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(0,120,212,0.1);
     }
 
-    textarea { resize: vertical; min-height: 100px; }
+    textarea { resize: vertical; min-height: 90px; }
 
     .select-wrap { position: relative; }
     .select-wrap::after {
-      content: '▾';
+      content: '›';
       position: absolute;
-      right: 1rem;
+      right: 0.85rem;
       top: 50%;
-      transform: translateY(-50%);
-      color: var(--muted);
+      transform: translateY(-50%) rotate(90deg);
+      color: var(--gray-3);
       pointer-events: none;
+      font-size: 1.1rem;
+      line-height: 1;
     }
-    select option { background: var(--surface2); }
 
-    .priority-pills { display: flex; gap: 0.6rem; }
+    /* Pills prioridade */
+    .pills { display: flex; gap: 0; }
     .pill input[type="radio"] { display: none; }
     .pill label {
       display: block;
-      padding: 0.55rem 1.2rem;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: var(--surface2);
+      padding: 0.55rem 1.4rem;
+      border: 1px solid var(--gray-2);
+      margin-right: -1px;
       cursor: pointer;
       font-size: 0.8rem;
       font-weight: 500;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--muted);
-      transition: all 0.18s ease;
-      margin: 0;
+      color: var(--gray-3);
+      transition: all 0.12s;
       white-space: nowrap;
+      background: white;
     }
-    .pill.alta input:checked + label  { border-color: var(--high); color: var(--high); background: rgba(239,68,68,0.1); }
-    .pill.media input:checked + label { border-color: var(--med);  color: var(--med);  background: rgba(245,158,11,0.1); }
-    .pill.baixa input:checked + label { border-color: var(--low);  color: var(--low);  background: rgba(34,197,94,0.1); }
-    .pill.alta label:hover  { border-color: var(--high); color: var(--high); }
-    .pill.media label:hover { border-color: var(--med);  color: var(--med); }
-    .pill.baixa label:hover { border-color: var(--low);  color: var(--low); }
+    .pill label:hover { background: var(--gray-0); color: var(--gray-4); }
 
-    .btn {
-      width: 100%;
+    .pill.alta  input:checked + label { background: #FFF4F4; border-color: var(--red);   color: var(--red);   z-index:1; position:relative; }
+    .pill.media input:checked + label { background: #FFF8F4; border-color: var(--amber); color: var(--amber); z-index:1; position:relative; }
+    .pill.baixa input:checked + label { background: #F0FFF0; border-color: var(--green); color: var(--green); z-index:1; position:relative; }
+
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+
+    /* Submit */
+    .form-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--gray-1);
       margin-top: 0.5rem;
-      padding: 0.9rem;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      border: none;
-      border-radius: 10px;
-      color: #fff;
-      font-family: 'Syne', sans-serif;
-      font-size: 0.95rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      cursor: pointer;
-      transition: opacity 0.2s, transform 0.15s;
     }
-    .btn:hover { opacity: 0.9; transform: translateY(-1px); }
-    .btn:active { transform: translateY(0); }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
+    .form-footer .hint {
+      font-size: 0.75rem;
+      color: var(--gray-3);
+    }
+
+    .btn-submit {
+      background: var(--blue);
+      border: none;
+      color: white;
+      font-family: var(--font);
+      font-size: 0.88rem;
+      font-weight: 500;
+      padding: 0.7rem 1.8rem;
+      cursor: pointer;
+      transition: background 0.15s;
+      letter-spacing: 0.02em;
+    }
+    .btn-submit:hover:not(:disabled) { background: var(--blue-dk); }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Toast */
     .toast {
       position: fixed;
-      bottom: 2rem;
-      left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 0.75rem 1.5rem;
-      font-size: 0.9rem;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--black);
+      color: white;
+      font-size: 0.82rem;
+      padding: 0.7rem 1.2rem;
       opacity: 0;
-      transition: all 0.3s ease;
+      transform: translateY(8px);
+      transition: all 0.25s ease;
       pointer-events: none;
-      z-index: 100;
-      white-space: nowrap;
+      z-index: 200;
+      max-width: 320px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
-    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-    .toast.success { border-color: var(--low); color: var(--low); }
-    .toast.error   { border-color: var(--high); color: var(--high); }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.success { background: var(--green); }
+    .toast.error   { background: var(--red); }
 
-    /* Loading state */
+    /* Loading */
     .loading-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(13,15,20,0.7);
-      z-index: 50;
+      background: rgba(255,255,255,0.85);
+      z-index: 100;
       align-items: center;
       justify-content: center;
+      flex-direction: column;
+      gap: 1rem;
     }
     .loading-overlay.visible { display: flex; }
+
     .spinner {
-      width: 36px;
-      height: 36px;
-      border: 3px solid var(--border);
-      border-top-color: var(--accent);
+      width: 28px;
+      height: 28px;
+      border: 2px solid var(--gray-1);
+      border-top-color: var(--blue);
       border-radius: 50%;
-      animation: spin 0.7s linear infinite;
+      animation: spin 0.6s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-overlay p {
+      font-size: 0.8rem;
+      color: var(--gray-3);
+      font-family: var(--mono);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      #loginScreen { flex-direction: column; }
+      .login-left { display: none; }
+      .login-right { width: 100%; padding: 2.5rem 1.5rem; }
+
+      #formScreen.visible { flex-direction: column; }
+      .form-sidebar { width: 100%; flex-direction: row; align-items: center; padding: 1.2rem 1.5rem; gap: 1rem; }
+      .sidebar-meta { margin-top: 0; margin-left: auto; }
+      .form-main { padding: 2rem 1.5rem; }
+      .row-2 { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
 
-  <div class="card">
-    <div class="card-header">
-      <div class="badge">Nova Solicitação</div>
-      <h1>Abertura de<br/>Chamado</h1>
+<!-- ── LOGIN ─────────────────────────────────────────────── -->
+<div id="loginScreen">
+  <div class="login-left">
+    <div class="brand">
+      <div class="brand-icon">
+        <svg width="16" height="16" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="1" width="9" height="9" fill="#F25022"/>
+          <rect x="11" y="1" width="9" height="9" fill="#7FBA00"/>
+          <rect x="1" y="11" width="9" height="9" fill="#00A4EF"/>
+          <rect x="11" y="11" width="9" height="9" fill="#FFB900"/>
+        </svg>
+      </div>
+      <span class="brand-name">Central de Chamados</span>
     </div>
 
-    <!-- Tela de login -->
-    <div id="loginScreen">
-      <p>Faça login com sua conta Microsoft<br/>para registrar a solicitação.</p>
-      <button class="btn-ms" id="loginBtn" onclick="fazerLogin()">
+    <div class="login-hero">
+      <h2>Abra seu<br/><strong>chamado com<br/>segurança.</strong></h2>
+      <p>Acesso restrito às contas corporativas da organização.</p>
+    </div>
+  </div>
+
+  <div class="login-right">
+    <h1>Entrar</h1>
+    <p class="subtitle">Use sua conta Microsoft corporativa para continuar.</p>
+
+    <button class="ms-btn" id="loginBtn" onclick="fazerLogin()">
+      <div class="ms-btn-icon">
         <svg width="20" height="20" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg">
           <rect x="1" y="1" width="9" height="9" fill="#F25022"/>
           <rect x="11" y="1" width="9" height="9" fill="#7FBA00"/>
           <rect x="1" y="11" width="9" height="9" fill="#00A4EF"/>
           <rect x="11" y="11" width="9" height="9" fill="#FFB900"/>
         </svg>
-        Entrar com Microsoft
-      </button>
+      </div>
+      <span class="ms-btn-text">Entrar com Microsoft</span>
+    </button>
+
+    <p class="login-footer">
+      Ao entrar, você concorda com os termos de uso internos.<br/>
+      Problemas? Contate o suporte de TI.
+    </p>
+  </div>
+</div>
+
+<!-- ── FORMULÁRIO ─────────────────────────────────────────── -->
+<div id="formScreen">
+  <div class="form-sidebar">
+    <div class="brand">
+      <div class="brand-icon" style="background:rgba(255,255,255,0.15);">
+        <svg width="14" height="14" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="1" width="9" height="9" fill="#F25022"/>
+          <rect x="11" y="1" width="9" height="9" fill="#7FBA00"/>
+          <rect x="1" y="11" width="9" height="9" fill="#00A4EF"/>
+          <rect x="11" y="11" width="9" height="9" fill="#FFB900"/>
+        </svg>
+      </div>
+      <span class="brand-name">Chamados</span>
     </div>
 
-    <!-- Barra do usuário logado -->
-    <div id="userBar">
-      <div class="user-avatar" id="userAvatar">?</div>
-      <div class="user-info">
-        <div class="user-name"  id="userName">—</div>
-        <div class="user-email" id="userEmail">—</div>
+    <div class="sidebar-meta">
+      <div class="label">Conectado como</div>
+      <div class="user-chip">
+        <div class="avatar" id="userAvatar">?</div>
+        <div class="user-chip-info">
+          <div class="user-chip-name"  id="userName">—</div>
+          <div class="user-chip-email" id="userEmail">—</div>
+        </div>
       </div>
-      <button class="btn-logout" onclick="fazerLogout()">Sair</button>
+      <button class="btn-logout" onclick="fazerLogout()">Sair da conta</button>
+    </div>
+  </div>
+
+  <div class="form-main">
+    <div class="form-header">
+      <div class="tag">Novo chamado</div>
+      <h1>Abertura de Solicitação</h1>
+      <p>Preencha os campos abaixo para registrar sua solicitação.</p>
     </div>
 
-    <!-- Formulário -->
-    <div id="formScreen">
+    <div class="row-2">
       <div class="field">
-        <label for="titulo">Título</label>
-        <input type="text" id="titulo" placeholder="Ex: Problema no sistema de acesso" />
+        <label for="titulo">Título <span class="req">*</span></label>
+        <input type="text" id="titulo" placeholder="Descreva brevemente o problema" />
       </div>
-
       <div class="field">
-        <label for="setor">Setor</label>
+        <label for="setor">Setor <span class="req">*</span></label>
         <div class="select-wrap">
           <select id="setor">
-            <option value="" disabled selected>Selecione o setor</option>
+            <option value="" disabled selected>Selecione</option>
             <option>Administrativo</option>
             <option>Financeiro</option>
             <option>RH</option>
@@ -372,207 +580,167 @@
           </select>
         </div>
       </div>
+    </div>
 
-      <div class="field">
-        <label for="descricao">Descrição</label>
-        <textarea id="descricao" placeholder="Descreva o problema ou solicitação em detalhes..."></textarea>
-      </div>
+    <div class="field">
+      <label for="descricao">Descrição <span class="req">*</span></label>
+      <textarea id="descricao" placeholder="Detalhe o problema, contexto e impacto…"></textarea>
+    </div>
 
-      <div class="field">
-        <label>Prioridade</label>
-        <div class="priority-pills">
-          <div class="pill alta">
-            <input type="radio" name="prioridade" id="alta" value="Alta"/>
-            <label for="alta">Alta</label>
-          </div>
-          <div class="pill media">
-            <input type="radio" name="prioridade" id="media" value="Média"/>
-            <label for="media">Média</label>
-          </div>
-          <div class="pill baixa">
-            <input type="radio" name="prioridade" id="baixa" value="Baixa"/>
-            <label for="baixa">Baixa</label>
-          </div>
+    <div class="field">
+      <label>Prioridade <span class="req">*</span></label>
+      <div class="pills">
+        <div class="pill alta">
+          <input type="radio" name="prioridade" id="alta" value="Alta"/>
+          <label for="alta">Alta</label>
+        </div>
+        <div class="pill media">
+          <input type="radio" name="prioridade" id="media" value="Média"/>
+          <label for="media">Média</label>
+        </div>
+        <div class="pill baixa">
+          <input type="radio" name="prioridade" id="baixa" value="Baixa"/>
+          <label for="baixa">Baixa</label>
         </div>
       </div>
+    </div>
 
-      <button class="btn" id="submitBtn" onclick="enviar()">Enviar Solicitação</button>
+    <div class="form-footer">
+      <span class="hint">* Campos obrigatórios</span>
+      <button class="btn-submit" id="submitBtn" onclick="enviar()">Enviar solicitação →</button>
     </div>
   </div>
+</div>
 
-  <!-- Loading overlay para o redirect -->
-  <div class="loading-overlay" id="loadingOverlay">
-    <div class="spinner"></div>
-  </div>
+<!-- Loading -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <p>Autenticando…</p>
+</div>
 
-  <div class="toast" id="toast"></div>
+<div class="toast" id="toast"></div>
 
-  <script>
-    // ── Configuração ──────────────────────────────────────
-    const CLIENT_ID = "1eb12022-5dbd-47ec-96be-34b8dcb8f9d8";
-    const TENANT_ID = "78908a2f-bf13-4474-af32-dfe822c76646";
-    const WEBHOOK   = "https://n8n-ho4040ks04wssoockc080gc8.coolify.mmcinfra.com/webhook-test/6eefe7c9-7729-464c-84d5-ac2ae7f6b741";
-    const SCOPES    = ["User.Read", "https://graph.microsoft.com/Sites.ReadWrite.All"];
-    // ─────────────────────────────────────────────────────
+<script>
+  const CLIENT_ID = "1eb12022-5dbd-47ec-96be-34b8dcb8f9d8";
+  const TENANT_ID = "78908a2f-bf13-4474-af32-dfe822c76646";
+  const WEBHOOK   = "https://n8n-ho4040ks04wssoockc080gc8.coolify.mmcinfra.com/webhook-test/6eefe7c9-7729-464c-84d5-ac2ae7f6b741";
+  const SCOPES    = ["User.Read", "https://graph.microsoft.com/Sites.ReadWrite.All"];
+  const redirectUri = window.location.origin + window.location.pathname;
 
-    // redirectUri aponta para a própria página — obrigatório estar registrado no Azure AD
-    const redirectUri = window.location.origin + window.location.pathname;
+  const msalInstance = new msal.PublicClientApplication({
+    auth: { clientId: CLIENT_ID, authority: `https://login.microsoftonline.com/${TENANT_ID}`, redirectUri },
+    cache: { cacheLocation: "localStorage", storeAuthStateInCookie: false }
+  });
 
-    const msalInstance = new msal.PublicClientApplication({
-      auth: {
-        clientId: CLIENT_ID,
-        authority: `https://login.microsoftonline.com/${TENANT_ID}`,
-        redirectUri: redirectUri
-      },
-      cache: {
-        // localStorage mantém sessão entre abas; sessionStorage é mais restrito
-        cacheLocation: "localStorage",
-        storeAuthStateInCookie: false
+  let usuarioAtual = null;
+
+  msalInstance.handleRedirectPromise()
+    .then(resp => {
+      if (resp?.account) {
+        usuarioAtual = resp.account;
+        mostrarFormulario(usuarioAtual);
+      } else {
+        const accounts = msalInstance.getAllAccounts();
+        if (accounts.length > 0) { usuarioAtual = accounts[0]; mostrarFormulario(usuarioAtual); }
       }
-    });
+    })
+    .catch(err => { console.error(err); showToast("Falha na autenticação.", "error"); })
+    .finally(() => document.getElementById("loadingOverlay").classList.remove("visible"));
 
-    let usuarioAtual = null;
+  if (window.location.hash.includes("code=") || window.location.hash.includes("error=")) {
+    document.getElementById("loadingOverlay").classList.add("visible");
+  }
 
-    // ── Ponto de entrada: processa o retorno do redirect ──
-    msalInstance.handleRedirectPromise()
-      .then(resp => {
-        if (resp && resp.account) {
-          // Voltou do redirect de login com sucesso
-          usuarioAtual = resp.account;
-          mostrarUsuario(usuarioAtual);
-        } else {
-          // Sem redirect em andamento — verifica se já havia sessão salva
-          const accounts = msalInstance.getAllAccounts();
-          if (accounts.length > 0) {
-            usuarioAtual = accounts[0];
-            mostrarUsuario(usuarioAtual);
-          }
-        }
-      })
-      .catch(err => {
-        console.error("Erro no handleRedirectPromise:", err);
-        showToast("❌ Falha na autenticação. Tente novamente.", "error");
-      })
-      .finally(() => {
-        // Esconde o spinner assim que o processamento do redirect termina
-        document.getElementById("loadingOverlay").classList.remove("visible");
+  async function fazerLogin() {
+    const btn = document.getElementById("loginBtn");
+    btn.disabled = true;
+    btn.querySelector(".ms-btn-text").textContent = "Redirecionando…";
+    try {
+      await msalInstance.loginRedirect({ scopes: SCOPES });
+    } catch(e) {
+      console.error(e);
+      showToast("Não foi possível iniciar o login.", "error");
+      btn.disabled = false;
+      btn.querySelector(".ms-btn-text").textContent = "Entrar com Microsoft";
+    }
+  }
+
+  function fazerLogout() {
+    msalInstance.logoutRedirect({ account: usuarioAtual, postLogoutRedirectUri: redirectUri });
+    usuarioAtual = null;
+  }
+
+  function mostrarFormulario(account) {
+    const nome     = account.name || account.username;
+    const email    = account.username;
+    const initials = nome.split(" ").map(n => n[0]).slice(0, 2).join("").toUpperCase();
+
+    document.getElementById("userAvatar").textContent = initials;
+    document.getElementById("userName").textContent   = nome;
+    document.getElementById("userEmail").textContent  = email;
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("formScreen").classList.add("visible");
+  }
+
+  async function getToken() {
+    try {
+      const resp = await msalInstance.acquireTokenSilent({ scopes: SCOPES, account: usuarioAtual });
+      return resp.accessToken;
+    } catch {
+      await msalInstance.acquireTokenRedirect({ scopes: SCOPES, account: usuarioAtual });
+    }
+  }
+
+  function showToast(msg, type) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = `toast ${type} show`;
+    setTimeout(() => t.className = 'toast', 3500);
+  }
+
+  async function enviar() {
+    const titulo     = document.getElementById('titulo').value.trim();
+    const setor      = document.getElementById('setor').value;
+    const descricao  = document.getElementById('descricao').value.trim();
+    const prioridade = document.querySelector('input[name="prioridade"]:checked')?.value;
+
+    if (!titulo || !setor || !descricao || !prioridade) {
+      showToast('Preencha todos os campos obrigatórios.', 'error');
+      return;
+    }
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Enviando…';
+
+    try {
+      const token = await getToken();
+      if (!token) return;
+
+      await fetch(WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          titulo, setor, descricao, prioridade, token,
+          nome:  usuarioAtual?.name     || "",
+          email: usuarioAtual?.username || ""
+        })
       });
 
-    // Se há hash de redirect na URL, mostra spinner enquanto processa
-    if (window.location.hash.includes("code=") || window.location.hash.includes("error=")) {
-      document.getElementById("loadingOverlay").classList.add("visible");
+      showToast('Solicitação enviada com sucesso.', 'success');
+      document.getElementById('titulo').value = '';
+      document.getElementById('setor').value  = '';
+      document.getElementById('descricao').value = '';
+      document.querySelectorAll('input[name="prioridade"]').forEach(r => r.checked = false);
+
+    } catch(err) {
+      console.error(err);
+      showToast('Erro ao enviar. Tente novamente.', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Enviar solicitação →';
     }
-
-    async function fazerLogin() {
-      const btn = document.getElementById("loginBtn");
-      btn.disabled = true;
-      btn.innerHTML = `<div class="spinner" style="width:18px;height:18px;border-width:2px;margin:0 auto;"></div>`;
-
-      try {
-        // loginRedirect redireciona a aba atual — sem popup, sem problema no GitHub Pages
-        await msalInstance.loginRedirect({ scopes: SCOPES });
-        // A execução para aqui; o navegador vai redirecionar para o Azure
-      } catch (e) {
-        console.error("Erro ao iniciar login:", e);
-        showToast("❌ Não foi possível iniciar o login.", "error");
-        btn.disabled = false;
-        btn.innerHTML = `
-          <svg width="20" height="20" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg">
-            <rect x="1" y="1" width="9" height="9" fill="#F25022"/>
-            <rect x="11" y="1" width="9" height="9" fill="#7FBA00"/>
-            <rect x="1" y="11" width="9" height="9" fill="#00A4EF"/>
-            <rect x="11" y="11" width="9" height="9" fill="#FFB900"/>
-          </svg>
-          Entrar com Microsoft`;
-      }
-    }
-
-    function fazerLogout() {
-      msalInstance.logoutRedirect({
-        account: usuarioAtual,
-        postLogoutRedirectUri: redirectUri
-      });
-      usuarioAtual = null;
-    }
-
-    function mostrarUsuario(account) {
-      const nome     = account.name || account.username;
-      const email    = account.username;
-      const initials = nome.split(" ").map(n => n[0]).slice(0, 2).join("").toUpperCase();
-
-      document.getElementById("userAvatar").textContent = initials;
-      document.getElementById("userName").textContent   = nome;
-      document.getElementById("userEmail").textContent  = email;
-      document.getElementById("userBar").classList.add("visible");
-      document.getElementById("loginScreen").style.display = "none";
-      document.getElementById("formScreen").classList.add("visible");
-    }
-
-    async function getToken() {
-      try {
-        const resp = await msalInstance.acquireTokenSilent({ scopes: SCOPES, account: usuarioAtual });
-        return resp.accessToken;
-      } catch {
-        // Se o silent falhar, usa redirect (sem popup)
-        await msalInstance.acquireTokenRedirect({ scopes: SCOPES, account: usuarioAtual });
-        // Execução para aqui — o navegador vai redirecionar
-      }
-    }
-
-    function showToast(msg, type) {
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.className = `toast ${type} show`;
-      setTimeout(() => t.className = 'toast', 3000);
-    }
-
-    async function enviar() {
-      const titulo     = document.getElementById('titulo').value.trim();
-      const setor      = document.getElementById('setor').value;
-      const descricao  = document.getElementById('descricao').value.trim();
-      const prioridade = document.querySelector('input[name="prioridade"]:checked')?.value;
-
-      if (!titulo || !setor || !descricao || !prioridade) {
-        showToast('⚠️ Preencha todos os campos.', 'error');
-        return;
-      }
-
-      const btn = document.getElementById('submitBtn');
-      btn.disabled = true;
-      btn.textContent = 'Enviando...';
-
-      try {
-        const token = await getToken();
-        if (!token) return; // acquireTokenRedirect vai redirecionar — interrompe aqui
-
-        await fetch(WEBHOOK, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            titulo,
-            setor,
-            descricao,
-            prioridade,
-            token,
-            nome:  usuarioAtual?.name     || "",
-            email: usuarioAtual?.username || ""
-          })
-        });
-
-        showToast('✅ Solicitação enviada com sucesso!', 'success');
-        document.getElementById('titulo').value = '';
-        document.getElementById('setor').value  = '';
-        document.getElementById('descricao').value = '';
-        document.querySelectorAll('input[name="prioridade"]').forEach(r => r.checked = false);
-
-      } catch (err) {
-        console.error("Erro ao enviar:", err);
-        showToast('❌ Erro ao enviar. Tente novamente.', 'error');
-      } finally {
-        btn.disabled = false;
-        btn.textContent = 'Enviar Solicitação';
-      }
-    }
-  </script>
+  }
+</script>
 </body>
 </html>
