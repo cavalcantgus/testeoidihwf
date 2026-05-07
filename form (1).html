@@ -1,33 +1,48 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Abertura de Chamado</title>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Syne:wght@700;800&display=swap"
+    rel="stylesheet" />
   <script src="https://alcdn.msauth.net/browser/2.30.0/js/msal-browser.min.js"></script>
   <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-    :root {
-      --blue:    #0078D4;
-      --blue-dk: #005A9E;
-      --blue-lt: #EBF3FB;
-      --white:   #FFFFFF;
-      --gray-0:  #F8F9FA;
-      --gray-1:  #E9ECEF;
-      --gray-2:  #CED4DA;
-      --gray-3:  #868E96;
-      --gray-4:  #495057;
-      --black:   #1A1A1A;
-      --red:     #D13438;
-      --green:   #107C10;
-      --amber:   #CA5010;
-      --font:    'IBM Plex Sans', sans-serif;
-      --mono:    'IBM Plex Mono', monospace;
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
-    html, body {
+    :root {
+      --green: #87d209;
+      --green-dk: #6aaa06;
+      --green-dim: #679e07;
+      --bg-dark: #131d01;
+      --white: #FFFFFF;
+      --gray-0: #F8F9FA;
+      --gray-1: #E9ECEF;
+      --gray-2: #CED4DA;
+      --gray-3: #868E96;
+      --gray-4: #495057;
+      --black: #1A1A1A;
+      --red: #D13438;
+      --g-success: #107C10;
+      --amber: #CA5010;
+      --blue: #0078D4;
+      --blue-dk: #005A9E;
+      --font: 'IBM Plex Sans', sans-serif;
+      --mono: 'IBM Plex Mono', monospace;
+      --hero: 'Syne', sans-serif;
+    }
+
+    html,
+    body {
       height: 100%;
       background: var(--gray-0);
       font-family: var(--font);
@@ -35,11 +50,13 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── LAYOUT ─────────────────────────────────────────── */
-    .page {
-      min-height: 100vh;
-      display: flex;
-      align-items: stretch;
+    .call-to-action {
+      font-family: 'Inter', sans-serif !important;
+      font-size: clamp(2.4rem, 4vw, 3.8rem) !important;
+      font-weight: 800 !important;
+      line-height: 1.05;
+      color: white;
+      letter-spacing: 0.02rem !important;
     }
 
     /* ── LOGIN SCREEN ───────────────────────────────────── */
@@ -49,17 +66,19 @@
       min-height: 100vh;
     }
 
+    /* LEFT PANEL */
     .login-left {
       flex: 1;
-      background: #2596be;
+      background: var(--bg-dark);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 3rem;
+      padding: 2.5rem 3rem 3rem;
       position: relative;
       overflow: hidden;
     }
 
+    /* Geometric accents */
     .login-left::before {
       content: '';
       position: absolute;
@@ -67,7 +86,7 @@
       right: -80px;
       width: 320px;
       height: 320px;
-      border: 40px solid rgba(255,255,255,0.07);
+      border: 40px solid rgba(135, 210, 9, 0.12);
     }
 
     .login-left::after {
@@ -77,57 +96,96 @@
       right: 60px;
       width: 160px;
       height: 160px;
-      border: 20px solid rgba(255,255,255,0.05);
+      border: 20px solid rgba(135, 210, 9, 0.08);
     }
 
+    /* Top brand */
     .brand {
       display: flex;
       align-items: center;
       gap: 0.75rem;
-    }
-
-    .brand-icon {
-      width: 32px;
-      height: 32px;
-      background: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .brand-name {
-      font-size: 0.8rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.9);
-    }
-
-    .login-hero {
       position: relative;
       z-index: 1;
     }
 
-    .login-hero h2 {
-      font-size: 2rem;
-      font-weight: 300;
-      color: white;
-      line-height: 1.3;
-      margin-bottom: 1rem;
+    .brand-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--green);
+      border-radius: 50%;
+      flex-shrink: 0;
     }
 
-    .login-hero h2 strong {
-      font-weight: 600;
+    .brand-name {
+      font-family: 'Inter', sans-serif !important;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    /* Hero text — center of panel */
+    .login-hero {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 2rem 0;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+    }
+
+    .login-hero h2 {
+      font-family: var(--hero);
+      font-size: clamp(2.4rem, 4vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.05;
+      color: white;
+      letter-spacing: -0.02em;
+    }
+
+    .login-hero h2 .accent {
+      color: var(--green);
+      font-style: italic;
       display: block;
     }
 
-    .login-hero p {
-      font-size: 0.85rem;
-      color: rgba(255,255,255,0.6);
-      line-height: 1.7;
-      max-width: 280px;
+    /* Bottom caption */
+    .login-caption {
+      position: relative;
+      z-index: 1;
+      font-size: 0.78rem;
+      color: rgba(255, 255, 255, 0.35);
+      line-height: 1.6;
+      max-width: 340px;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
     }
 
+    /* RIGHT PANEL */
     .login-right {
       width: 420px;
       flex-shrink: 0;
@@ -155,7 +213,6 @@
     .ms-btn {
       display: flex;
       align-items: center;
-      gap: 0;
       background: white;
       border: 1px solid var(--gray-2);
       cursor: pointer;
@@ -174,7 +231,10 @@
       box-shadow: 0 0 0 1px var(--blue);
     }
 
-    .ms-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .ms-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
 
     .ms-btn-icon {
       width: 44px;
@@ -200,8 +260,6 @@
       line-height: 1.6;
     }
 
-    .login-footer a { color: var(--blue); text-decoration: none; }
-
     /* ── FORM SCREEN ────────────────────────────────────── */
     #formScreen {
       display: none;
@@ -209,31 +267,50 @@
       min-height: 100vh;
     }
 
-    #formScreen.visible { display: flex; }
+    #formScreen.visible {
+      display: flex;
+    }
 
     .form-sidebar {
       width: 260px;
       flex-shrink: 0;
-      background: #2596be;
+      background: var(--bg-dark);
       padding: 2.5rem 2rem;
       display: flex;
       flex-direction: column;
       gap: 2rem;
+      position: relative;
+      overflow: hidden;
     }
 
-    .form-sidebar .brand-name { color: rgba(255,255,255,0.85); }
+    .form-sidebar::before {
+      content: '';
+      position: absolute;
+      bottom: -60px;
+      right: -60px;
+      width: 200px;
+      height: 200px;
+      border: 30px solid rgba(135, 210, 9, 0.08);
+    }
+
+    .form-sidebar .brand-name {
+      color: rgba(255, 255, 255, 0.7);
+    }
 
     .sidebar-meta {
       margin-top: auto;
+      position: relative;
+      z-index: 1;
     }
 
     .sidebar-meta .label {
-      font-size: 0.7rem;
+      font-family: var(--mono);
+      font-size: 0.65rem;
       font-weight: 500;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.45);
-      margin-bottom: 0.35rem;
+      color: rgba(255, 255, 255, 0.3);
+      margin-bottom: 0.5rem;
     }
 
     .user-chip {
@@ -245,26 +322,43 @@
     .avatar {
       width: 30px;
       height: 30px;
-      background: rgba(255,255,255,0.15);
+      background: var(--green);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 0.7rem;
-      font-weight: 600;
-      color: white;
+      font-weight: 700;
+      color: var(--bg-dark);
       flex-shrink: 0;
       font-family: var(--mono);
     }
 
-    .user-chip-info { min-width: 0; }
-    .user-chip-name  { font-size: 0.82rem; font-weight: 500; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .user-chip-email { font-size: 0.7rem; color: rgba(255,255,255,0.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .user-chip-info {
+      min-width: 0;
+    }
+
+    .user-chip-name {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: white;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .user-chip-email {
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.4);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
     .btn-logout {
       margin-top: 0.75rem;
       background: none;
-      border: 1px solid rgba(255,255,255,0.2);
-      color: rgba(255,255,255,0.6);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: rgba(255, 255, 255, 0.4);
       font-family: var(--font);
       font-size: 0.75rem;
       padding: 0.4rem 0.8rem;
@@ -273,7 +367,12 @@
       width: 100%;
       text-align: left;
     }
-    .btn-logout:hover { background: rgba(255,255,255,0.08); color: white; border-color: rgba(255,255,255,0.4); }
+
+    .btn-logout:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+      border-color: rgba(255, 255, 255, 0.3);
+    }
 
     .form-main {
       flex: 1;
@@ -291,7 +390,7 @@
     .form-header .tag {
       font-family: var(--mono);
       font-size: 0.7rem;
-      color: var(--blue);
+      color: var(--green-dk);
       text-transform: uppercase;
       letter-spacing: 0.1em;
       margin-bottom: 0.5rem;
@@ -309,7 +408,9 @@
       margin-top: 0.3rem;
     }
 
-    .field { margin-bottom: 1.5rem; }
+    .field {
+      margin-bottom: 1.5rem;
+    }
 
     .field label {
       display: block;
@@ -320,9 +421,14 @@
       letter-spacing: 0.01em;
     }
 
-    .field label .req { color: var(--blue); margin-left: 2px; }
+    .field label .req {
+      color: var(--green-dk);
+      margin-left: 2px;
+    }
 
-    input[type="text"], select, textarea {
+    input[type="text"],
+    select,
+    textarea {
       width: 100%;
       background: var(--white);
       border: 1px solid var(--gray-2);
@@ -336,14 +442,22 @@
       appearance: none;
     }
 
-    input[type="text"]:focus, select:focus, textarea:focus {
-      border-color: var(--blue);
-      box-shadow: 0 0 0 3px rgba(0,120,212,0.1);
+    input[type="text"]:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--green-dk);
+      box-shadow: 0 0 0 3px rgba(135, 210, 9, 0.12);
     }
 
-    textarea { resize: vertical; min-height: 90px; }
+    textarea {
+      resize: vertical;
+      min-height: 90px;
+    }
 
-    .select-wrap { position: relative; }
+    .select-wrap {
+      position: relative;
+    }
+
     .select-wrap::after {
       content: '›';
       position: absolute;
@@ -356,9 +470,14 @@
       line-height: 1;
     }
 
-    /* Pills prioridade */
-    .pills { display: flex; gap: 0; }
-    .pill input[type="radio"] { display: none; }
+    .pills {
+      display: flex;
+    }
+
+    .pill input[type="radio"] {
+      display: none;
+    }
+
     .pill label {
       display: block;
       padding: 0.55rem 1.4rem;
@@ -372,15 +491,42 @@
       white-space: nowrap;
       background: white;
     }
-    .pill label:hover { background: var(--gray-0); color: var(--gray-4); }
 
-    .pill.alta  input:checked + label { background: #FFF4F4; border-color: var(--red);   color: var(--red);   z-index:1; position:relative; }
-    .pill.media input:checked + label { background: #FFF8F4; border-color: var(--amber); color: var(--amber); z-index:1; position:relative; }
-    .pill.baixa input:checked + label { background: #F0FFF0; border-color: var(--green); color: var(--green); z-index:1; position:relative; }
+    .pill label:hover {
+      background: var(--gray-0);
+      color: var(--gray-4);
+    }
 
-    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+    .pill.alta input:checked+label {
+      background: #FFF4F4;
+      border-color: var(--red);
+      color: var(--red);
+      z-index: 1;
+      position: relative;
+    }
 
-    /* Submit */
+    .pill.media input:checked+label {
+      background: #FFF8F4;
+      border-color: var(--amber);
+      color: var(--amber);
+      z-index: 1;
+      position: relative;
+    }
+
+    .pill.baixa input:checked+label {
+      background: #F4FFF4;
+      border-color: var(--g-success);
+      color: var(--g-success);
+      z-index: 1;
+      position: relative;
+    }
+
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+    }
+
     .form-footer {
       display: flex;
       align-items: center;
@@ -396,9 +542,9 @@
     }
 
     .btn-submit {
-      background: var(--blue);
+      background: var(--bg-dark);
       border: none;
-      color: white;
+      color: var(--green);
       font-family: var(--font);
       font-size: 0.88rem;
       font-weight: 500;
@@ -407,8 +553,15 @@
       transition: background 0.15s;
       letter-spacing: 0.02em;
     }
-    .btn-submit:hover:not(:disabled) { background: var(--blue-dk); }
-    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn-submit:hover:not(:disabled) {
+      background: #0d1501;
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
 
     /* Toast */
     .toast {
@@ -425,37 +578,52 @@
       pointer-events: none;
       z-index: 200;
       max-width: 320px;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
     }
-    .toast.show { opacity: 1; transform: translateY(0); }
-    .toast.success { background: var(--green); }
-    .toast.error   { background: var(--red); }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .toast.success {
+      background: var(--g-success);
+    }
+
+    .toast.error {
+      background: var(--red);
+    }
 
     /* Loading */
     .loading-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(255,255,255,0.85);
+      background: rgba(255, 255, 255, 0.9);
       z-index: 100;
       align-items: center;
       justify-content: center;
       flex-direction: column;
       gap: 1rem;
     }
-    .loading-overlay.visible { display: flex; }
+
+    .loading-overlay.visible {
+      display: flex;
+    }
 
     .spinner {
       width: 28px;
       height: 28px;
       border: 2px solid var(--gray-1);
-      border-top-color: var(--blue);
+      border-top-color: var(--green);
       border-radius: 50%;
       animation: spin 0.6s linear infinite;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
 
     .loading-overlay p {
       font-size: 0.8rem;
@@ -465,282 +633,321 @@
 
     /* Responsive */
     @media (max-width: 768px) {
-      #loginScreen { flex-direction: column; }
-      .login-left { display: none; }
-      .login-right { width: 100%; padding: 2.5rem 1.5rem; }
+      #loginScreen {
+        flex-direction: column;
+      }
 
-      #formScreen.visible { flex-direction: column; }
-      .form-sidebar { width: 100%; flex-direction: row; align-items: center; padding: 1.2rem 1.5rem; gap: 1rem; }
-      .sidebar-meta { margin-top: 0; margin-left: auto; }
-      .form-main { padding: 2rem 1.5rem; }
-      .row-2 { grid-template-columns: 1fr; }
+      .login-left {
+        min-height: 50vh;
+        padding: 2rem;
+      }
+
+      .login-right {
+        width: 100%;
+        padding: 2.5rem 1.5rem;
+      }
+
+      #formScreen.visible {
+        flex-direction: column;
+      }
+
+      .form-sidebar {
+        width: 100%;
+        flex-direction: row;
+        align-items: center;
+        padding: 1.2rem 1.5rem;
+        gap: 1rem;
+      }
+
+      .sidebar-meta {
+        margin-top: 0;
+        margin-left: auto;
+      }
+
+      .form-main {
+        padding: 2rem 1.5rem;
+      }
+
+      .row-2 {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
+
 <body>
 
-<!-- ── LOGIN ─────────────────────────────────────────────── -->
-<div id="loginScreen">
-  <div class="login-left">
-    <div class="brand">
-      <div class="brand-icon">
-        <svg width="16" height="16" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg">
-          <rect x="1" y="1" width="9" height="9" fill="#F25022"/>
-          <rect x="11" y="1" width="9" height="9" fill="#7FBA00"/>
-          <rect x="1" y="11" width="9" height="9" fill="#00A4EF"/>
-          <rect x="11" y="11" width="9" height="9" fill="#FFB900"/>
-        </svg>
+  <!-- ── LOGIN ─────────────────────────────────────────────── -->
+  <div id="loginScreen">
+    <div class="login-left">
+
+      <!-- Top: brand -->
+      <div class="brand"
+        style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+
+        <div class="d-flex" style="display: flex; align-items: center; justify-content: center; gap: 12px;">
+          <img src="Captura_de_tela_2026-05-07_153645-removebg-preview.png" alt="" width="100px">
+          <img src="Captura_de_tela_2026-05-07_154329-removebg-preview.png" alt="" width="100px">
+          <span class="brand-name" style="margin-top: 8px;">
+            Central de Chamados
+          </span>
+        </div>
+
+
+
       </div>
-      <span class="brand-name">Central de Chamados</span>
+
+      <!-- Center: hero -->
+      <div class="login-hero">
+        <span class="hero-eyebrow">Geração Bancária</span>
+        <h2 class="call-to-action">
+          Abra seu<br />
+          chamado
+          <span class="accent">com segurança.</span>
+        </h2>
+      </div>
+
+      <!-- Bottom: caption -->
+      <p class="login-caption">
+        Acesso restrito às contas corporativas da organização.<br />
+        Utilize suas credenciais Microsoft para continuar.
+      </p>
+
     </div>
 
-    <div class="login-hero">
-      <h2>Abra seu<br/><strong>chamado com<br/>segurança.</strong></h2>
-      <p>Acesso restrito às contas corporativas da organização.</p>
+    <div class="login-right">
+      <h1>Entrar</h1>
+      <p class="subtitle">Use sua conta Microsoft corporativa para continuar.</p>
+
+      <button class="ms-btn" id="loginBtn" onclick="fazerLogin()">
+        <div class="ms-btn-icon">
+          <svg width="20" height="20" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg">
+            <rect x="1" y="1" width="9" height="9" fill="#F25022" />
+            <rect x="11" y="1" width="9" height="9" fill="#7FBA00" />
+            <rect x="1" y="11" width="9" height="9" fill="#00A4EF" />
+            <rect x="11" y="11" width="9" height="9" fill="#FFB900" />
+          </svg>
+        </div>
+        <span class="ms-btn-text">Entrar com Microsoft</span>
+      </button>
+
+      <p class="login-footer">
+        Ao entrar, você concorda com os termos de uso internos.<br />
+        Problemas? Contate o suporte de TI.
+      </p>
     </div>
   </div>
 
-  <div class="login-right">
-    <h1>Entrar</h1>
-    <p class="subtitle">Use sua conta Microsoft corporativa para continuar.</p>
-
-    <button class="ms-btn" id="loginBtn" onclick="fazerLogin()">
-      <div class="ms-btn-icon">
-        <svg width="20" height="20" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg">
-          <rect x="1" y="1" width="9" height="9" fill="#F25022"/>
-          <rect x="11" y="1" width="9" height="9" fill="#7FBA00"/>
-          <rect x="1" y="11" width="9" height="9" fill="#00A4EF"/>
-          <rect x="11" y="11" width="9" height="9" fill="#FFB900"/>
-        </svg>
+  <!-- ── FORMULÁRIO ─────────────────────────────────────────── -->
+  <div id="formScreen">
+    <div class="form-sidebar">
+      <div class="brand">
+        <div class="brand-dot"></div>
+        <span class="brand-name">Chamados</span>
       </div>
-      <span class="ms-btn-text">Entrar com Microsoft</span>
-    </button>
 
-    <p class="login-footer">
-      Ao entrar, você concorda com os termos de uso internos.<br/>
-      Problemas? Contate o suporte de TI.
-    </p>
-  </div>
-</div>
-
-<!-- ── FORMULÁRIO ─────────────────────────────────────────── -->
-<div id="formScreen">
-  <div class="form-sidebar">
-    <div class="brand">
-      <div class="brand-icon" style="background:rgba(255,255,255,0.15);">
-        <svg width="14" height="14" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg">
-          <rect x="1" y="1" width="9" height="9" fill="#F25022"/>
-          <rect x="11" y="1" width="9" height="9" fill="#7FBA00"/>
-          <rect x="1" y="11" width="9" height="9" fill="#00A4EF"/>
-          <rect x="11" y="11" width="9" height="9" fill="#FFB900"/>
-        </svg>
+      <div class="sidebar-meta">
+        <div class="label">Conectado como</div>
+        <div class="user-chip">
+          <div class="avatar" id="userAvatar">?</div>
+          <div class="user-chip-info">
+            <div class="user-chip-name" id="userName">—</div>
+            <div class="user-chip-email" id="userEmail">—</div>
+          </div>
+        </div>
+        <button class="btn-logout" onclick="fazerLogout()">Sair da conta</button>
       </div>
-      <span class="brand-name">Chamados</span>
     </div>
 
-    <div class="sidebar-meta">
-      <div class="label">Conectado como</div>
-      <div class="user-chip">
-        <div class="avatar" id="userAvatar">?</div>
-        <div class="user-chip-info">
-          <div class="user-chip-name"  id="userName">—</div>
-          <div class="user-chip-email" id="userEmail">—</div>
+    <div class="form-main">
+      <div class="form-header">
+        <div class="tag">Novo chamado</div>
+        <h1>Abertura de Solicitação</h1>
+        <p>Preencha os campos abaixo para registrar sua solicitação.</p>
+      </div>
+
+      <div class="row-2">
+        <div class="field">
+          <label for="titulo">Título <span class="req">*</span></label>
+          <input type="text" id="titulo" placeholder="Descreva brevemente o problema" />
+        </div>
+        <div class="field">
+          <label for="setor">Setor <span class="req">*</span></label>
+          <div class="select-wrap">
+            <select id="setor">
+              <option value="" disabled selected>Selecione</option>
+              <option>Administrativo</option>
+              <option>Financeiro</option>
+              <option>RH</option>
+              <option>Marketing</option>
+              <option>Comercial</option>
+              <option>Acadêmico</option>
+              <option>Jurídico</option>
+              <option>Contábil</option>
+              <option>Tecnologia</option>
+            </select>
+          </div>
         </div>
       </div>
-      <button class="btn-logout" onclick="fazerLogout()">Sair da conta</button>
-    </div>
-  </div>
 
-  <div class="form-main">
-    <div class="form-header">
-      <div class="tag">Novo chamado</div>
-      <h1>Abertura de Solicitação</h1>
-      <p>Preencha os campos abaixo para registrar sua solicitação.</p>
-    </div>
-
-    <div class="row-2">
       <div class="field">
-        <label for="titulo">Título <span class="req">*</span></label>
-        <input type="text" id="titulo" placeholder="Descreva brevemente o problema" />
+        <label for="descricao">Descrição <span class="req">*</span></label>
+        <textarea id="descricao" placeholder="Detalhe o problema, contexto e impacto…"></textarea>
       </div>
+
       <div class="field">
-        <label for="setor">Setor <span class="req">*</span></label>
-        <div class="select-wrap">
-          <select id="setor">
-            <option value="" disabled selected>Selecione</option>
-            <option>Administrativo</option>
-            <option>Financeiro</option>
-            <option>RH</option>
-            <option>Marketing</option>
-            <option>Comercial</option>
-            <option>Acadêmico</option>
-            <option>Jurídico</option>
-            <option>Contábil</option>
-            <option>Tecnologia</option>
-          </select>
+        <label>Prioridade <span class="req">*</span></label>
+        <div class="pills">
+          <div class="pill alta">
+            <input type="radio" name="prioridade" id="alta" value="Alta" />
+            <label for="alta">Alta</label>
+          </div>
+          <div class="pill media">
+            <input type="radio" name="prioridade" id="media" value="Média" />
+            <label for="media">Média</label>
+          </div>
+          <div class="pill baixa">
+            <input type="radio" name="prioridade" id="baixa" value="Baixa" />
+            <label for="baixa">Baixa</label>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="field">
-      <label for="descricao">Descrição <span class="req">*</span></label>
-      <textarea id="descricao" placeholder="Detalhe o problema, contexto e impacto…"></textarea>
-    </div>
-
-    <div class="field">
-      <label>Prioridade <span class="req">*</span></label>
-      <div class="pills">
-        <div class="pill alta">
-          <input type="radio" name="prioridade" id="alta" value="Alta"/>
-          <label for="alta">Alta</label>
-        </div>
-        <div class="pill media">
-          <input type="radio" name="prioridade" id="media" value="Média"/>
-          <label for="media">Média</label>
-        </div>
-        <div class="pill baixa">
-          <input type="radio" name="prioridade" id="baixa" value="Baixa"/>
-          <label for="baixa">Baixa</label>
-        </div>
+      <div class="form-footer">
+        <span class="hint">* Campos obrigatórios</span>
+        <button class="btn-submit" id="submitBtn" onclick="enviar()">Enviar solicitação →</button>
       </div>
-    </div>
-
-    <div class="form-footer">
-      <span class="hint">* Campos obrigatórios</span>
-      <button class="btn-submit" id="submitBtn" onclick="enviar()">Enviar solicitação →</button>
     </div>
   </div>
-</div>
 
-<!-- Loading -->
-<div class="loading-overlay" id="loadingOverlay">
-  <div class="spinner"></div>
-  <p>Autenticando…</p>
-</div>
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <p>Autenticando…</p>
+  </div>
 
-<div class="toast" id="toast"></div>
+  <div class="toast" id="toast"></div>
 
-<script>
-  const CLIENT_ID = "1eb12022-5dbd-47ec-96be-34b8dcb8f9d8";
-  const TENANT_ID = "78908a2f-bf13-4474-af32-dfe822c76646";
-  const WEBHOOK   = "https://n8n-ho4040ks04wssoockc080gc8.coolify.mmcinfra.com/webhook-test/6eefe7c9-7729-464c-84d5-ac2ae7f6b741";
-  const SCOPES    = ["User.Read", "https://graph.microsoft.com/Sites.ReadWrite.All"];
-  const redirectUri = window.location.origin + window.location.pathname;
+  <script>
+    const CLIENT_ID = "1eb12022-5dbd-47ec-96be-34b8dcb8f9d8";
+    const TENANT_ID = "78908a2f-bf13-4474-af32-dfe822c76646";
+    const WEBHOOK = "https://n8n-ho4040ks04wssoockc080gc8.coolify.mmcinfra.com/webhook-test/6eefe7c9-7729-464c-84d5-ac2ae7f6b741";
+    const SCOPES = ["User.Read", "https://graph.microsoft.com/Sites.ReadWrite.All"];
+    const redirectUri = window.location.origin + window.location.pathname;
 
-  const msalInstance = new msal.PublicClientApplication({
-    auth: { clientId: CLIENT_ID, authority: `https://login.microsoftonline.com/${TENANT_ID}`, redirectUri },
-    cache: { cacheLocation: "localStorage", storeAuthStateInCookie: false }
-  });
+    const msalInstance = new msal.PublicClientApplication({
+      auth: { clientId: CLIENT_ID, authority: `https://login.microsoftonline.com/${TENANT_ID}`, redirectUri },
+      cache: { cacheLocation: "localStorage", storeAuthStateInCookie: false }
+    });
 
-  let usuarioAtual = null;
+    let usuarioAtual = null;
 
-  msalInstance.handleRedirectPromise()
-    .then(resp => {
-      if (resp?.account) {
-        usuarioAtual = resp.account;
-        mostrarFormulario(usuarioAtual);
-      } else {
-        const accounts = msalInstance.getAllAccounts();
-        if (accounts.length > 0) { usuarioAtual = accounts[0]; mostrarFormulario(usuarioAtual); }
+    msalInstance.handleRedirectPromise()
+      .then(resp => {
+        if (resp?.account) {
+          usuarioAtual = resp.account;
+          mostrarFormulario(usuarioAtual);
+        } else {
+          const accounts = msalInstance.getAllAccounts();
+          if (accounts.length > 0) { usuarioAtual = accounts[0]; mostrarFormulario(usuarioAtual); }
+        }
+      })
+      .catch(err => { console.error(err); showToast("Falha na autenticação.", "error"); })
+      .finally(() => document.getElementById("loadingOverlay").classList.remove("visible"));
+
+    if (window.location.hash.includes("code=") || window.location.hash.includes("error=")) {
+      document.getElementById("loadingOverlay").classList.add("visible");
+    }
+
+    async function fazerLogin() {
+      const btn = document.getElementById("loginBtn");
+      btn.disabled = true;
+      btn.querySelector(".ms-btn-text").textContent = "Redirecionando…";
+      try {
+        await msalInstance.loginRedirect({ scopes: SCOPES });
+      } catch (e) {
+        console.error(e);
+        showToast("Não foi possível iniciar o login.", "error");
+        btn.disabled = false;
+        btn.querySelector(".ms-btn-text").textContent = "Entrar com Microsoft";
       }
-    })
-    .catch(err => { console.error(err); showToast("Falha na autenticação.", "error"); })
-    .finally(() => document.getElementById("loadingOverlay").classList.remove("visible"));
-
-  if (window.location.hash.includes("code=") || window.location.hash.includes("error=")) {
-    document.getElementById("loadingOverlay").classList.add("visible");
-  }
-
-  async function fazerLogin() {
-    const btn = document.getElementById("loginBtn");
-    btn.disabled = true;
-    btn.querySelector(".ms-btn-text").textContent = "Redirecionando…";
-    try {
-      await msalInstance.loginRedirect({ scopes: SCOPES });
-    } catch(e) {
-      console.error(e);
-      showToast("Não foi possível iniciar o login.", "error");
-      btn.disabled = false;
-      btn.querySelector(".ms-btn-text").textContent = "Entrar com Microsoft";
-    }
-  }
-
-  function fazerLogout() {
-    msalInstance.logoutRedirect({ account: usuarioAtual, postLogoutRedirectUri: redirectUri });
-    usuarioAtual = null;
-  }
-
-  function mostrarFormulario(account) {
-    const nome     = account.name || account.username;
-    const email    = account.username;
-    const initials = nome.split(" ").map(n => n[0]).slice(0, 2).join("").toUpperCase();
-
-    document.getElementById("userAvatar").textContent = initials;
-    document.getElementById("userName").textContent   = nome;
-    document.getElementById("userEmail").textContent  = email;
-    document.getElementById("loginScreen").style.display = "none";
-    document.getElementById("formScreen").classList.add("visible");
-  }
-
-  async function getToken() {
-    try {
-      const resp = await msalInstance.acquireTokenSilent({ scopes: SCOPES, account: usuarioAtual });
-      return resp.accessToken;
-    } catch {
-      await msalInstance.acquireTokenRedirect({ scopes: SCOPES, account: usuarioAtual });
-    }
-  }
-
-  function showToast(msg, type) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.className = `toast ${type} show`;
-    setTimeout(() => t.className = 'toast', 3500);
-  }
-
-  async function enviar() {
-    const titulo     = document.getElementById('titulo').value.trim();
-    const setor      = document.getElementById('setor').value;
-    const descricao  = document.getElementById('descricao').value.trim();
-    const prioridade = document.querySelector('input[name="prioridade"]:checked')?.value;
-
-    if (!titulo || !setor || !descricao || !prioridade) {
-      showToast('Preencha todos os campos obrigatórios.', 'error');
-      return;
     }
 
-    const btn = document.getElementById('submitBtn');
-    btn.disabled = true;
-    btn.textContent = 'Enviando…';
-
-    try {
-      const token = await getToken();
-      if (!token) return;
-
-      await fetch(WEBHOOK, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          titulo, setor, descricao, prioridade, token,
-          nome:  usuarioAtual?.name     || "",
-          email: usuarioAtual?.username || ""
-        })
-      });
-
-      showToast('Solicitação enviada com sucesso.', 'success');
-      document.getElementById('titulo').value = '';
-      document.getElementById('setor').value  = '';
-      document.getElementById('descricao').value = '';
-      document.querySelectorAll('input[name="prioridade"]').forEach(r => r.checked = false);
-
-    } catch(err) {
-      console.error(err);
-      showToast('Erro ao enviar. Tente novamente.', 'error');
-    } finally {
-      btn.disabled = false;
-      btn.textContent = 'Enviar solicitação →';
+    function fazerLogout() {
+      msalInstance.logoutRedirect({ account: usuarioAtual, postLogoutRedirectUri: redirectUri });
+      usuarioAtual = null;
     }
-  }
-</script>
+
+    function mostrarFormulario(account) {
+      const nome = account.name || account.username;
+      const email = account.username;
+      const initials = nome.split(" ").map(n => n[0]).slice(0, 2).join("").toUpperCase();
+      document.getElementById("userAvatar").textContent = initials;
+      document.getElementById("userName").textContent = nome;
+      document.getElementById("userEmail").textContent = email;
+      document.getElementById("loginScreen").style.display = "none";
+      document.getElementById("formScreen").classList.add("visible");
+    }
+
+    async function getToken() {
+      try {
+        const resp = await msalInstance.acquireTokenSilent({ scopes: SCOPES, account: usuarioAtual });
+        return resp.accessToken;
+      } catch {
+        await msalInstance.acquireTokenRedirect({ scopes: SCOPES, account: usuarioAtual });
+      }
+    }
+
+    function showToast(msg, type) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = `toast ${type} show`;
+      setTimeout(() => t.className = 'toast', 3500);
+    }
+
+    async function enviar() {
+      const titulo = document.getElementById('titulo').value.trim();
+      const setor = document.getElementById('setor').value;
+      const descricao = document.getElementById('descricao').value.trim();
+      const prioridade = document.querySelector('input[name="prioridade"]:checked')?.value;
+
+      if (!titulo || !setor || !descricao || !prioridade) {
+        showToast('Preencha todos os campos obrigatórios.', 'error');
+        return;
+      }
+
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.textContent = 'Enviando…';
+
+      try {
+        const token = await getToken();
+        if (!token) return;
+
+        await fetch(WEBHOOK, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            titulo, setor, descricao, prioridade, token,
+            nome: usuarioAtual?.name || "",
+            email: usuarioAtual?.username || ""
+          })
+        });
+
+        showToast('Solicitação enviada com sucesso.', 'success');
+        document.getElementById('titulo').value = '';
+        document.getElementById('setor').value = '';
+        document.getElementById('descricao').value = '';
+        document.querySelectorAll('input[name="prioridade"]').forEach(r => r.checked = false);
+
+      } catch (err) {
+        console.error(err);
+        showToast('Erro ao enviar. Tente novamente.', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Enviar solicitação →';
+      }
+    }
+  </script>
 </body>
+
 </html>
