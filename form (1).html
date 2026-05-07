@@ -1055,7 +1055,7 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            titulo, setor, descricao, prioridade, token,
+            titulo, setor, acao, descricao, prioridade, token,
             nome: usuarioAtual?.name || "",
             email: usuarioAtual?.username || ""
           })
@@ -1064,6 +1064,7 @@
         showToast('Solicitação enviada com sucesso.', 'success');
         document.getElementById('titulo').value = '';
         document.getElementById('setor').value = '';
+        document.getElementById('acao').value = '';
         document.getElementById('descricao').value = '';
         document.querySelectorAll('input[name="prioridade"]').forEach(r => r.checked = false);
 
