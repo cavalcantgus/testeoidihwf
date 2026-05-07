@@ -127,6 +127,7 @@
       justify-content: center;
     }
     .btn-ms:hover { background: #272d3e; border-color: var(--accent); }
+    .btn-ms:disabled { opacity: 0.5; cursor: not-allowed; }
 
     /* User bar */
     #userBar {
@@ -292,6 +293,27 @@
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     .toast.success { border-color: var(--low); color: var(--low); }
     .toast.error   { border-color: var(--high); color: var(--high); }
+
+    /* Loading state */
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(13,15,20,0.7);
+      z-index: 50;
+      align-items: center;
+      justify-content: center;
+    }
+    .loading-overlay.visible { display: flex; }
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
@@ -305,7 +327,7 @@
     <!-- Tela de login -->
     <div id="loginScreen">
       <p>Faça login com sua conta Microsoft<br/>para registrar a solicitação.</p>
-      <button class="btn-ms" onclick="fazerLogin()">
+      <button class="btn-ms" id="loginBtn" onclick="fazerLogin()">
         <svg width="20" height="20" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg">
           <rect x="1" y="1" width="9" height="9" fill="#F25022"/>
           <rect x="11" y="1" width="9" height="9" fill="#7FBA00"/>
@@ -378,6 +400,11 @@
     </div>
   </div>
 
+  <!-- Loading overlay para o redirect -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+  </div>
+
   <div class="toast" id="toast"></div>
 
   <script>
@@ -388,46 +415,84 @@
     const SCOPES    = ["User.Read", "https://graph.microsoft.com/Sites.ReadWrite.All"];
     // ─────────────────────────────────────────────────────
 
+    // redirectUri aponta para a própria página — obrigatório estar registrado no Azure AD
+    const redirectUri = window.location.origin + window.location.pathname;
+
     const msalInstance = new msal.PublicClientApplication({
       auth: {
         clientId: CLIENT_ID,
         authority: `https://login.microsoftonline.com/${TENANT_ID}`,
-        // CORREÇÃO: usa origin + pathname para evitar problemas com hash/query no GitHub Pages
-        redirectUri: window.location.origin + window.location.pathname
+        redirectUri: redirectUri
       },
-      cache: { cacheLocation: "sessionStorage" }
+      cache: {
+        // localStorage mantém sessão entre abas; sessionStorage é mais restrito
+        cacheLocation: "localStorage",
+        storeAuthStateInCookie: false
+      }
     });
 
     let usuarioAtual = null;
 
-    // Recupera sessão existente ao carregar
-    msalInstance.handleRedirectPromise().then(() => {
-      const accounts = msalInstance.getAllAccounts();
-      if (accounts.length > 0) {
-        usuarioAtual = accounts[0];
-        mostrarUsuario(usuarioAtual);
-      }
-    }).catch(err => {
-      console.error("Erro ao recuperar sessão:", err);
-    });
+    // ── Ponto de entrada: processa o retorno do redirect ──
+    msalInstance.handleRedirectPromise()
+      .then(resp => {
+        if (resp && resp.account) {
+          // Voltou do redirect de login com sucesso
+          usuarioAtual = resp.account;
+          mostrarUsuario(usuarioAtual);
+        } else {
+          // Sem redirect em andamento — verifica se já havia sessão salva
+          const accounts = msalInstance.getAllAccounts();
+          if (accounts.length > 0) {
+            usuarioAtual = accounts[0];
+            mostrarUsuario(usuarioAtual);
+          }
+        }
+      })
+      .catch(err => {
+        console.error("Erro no handleRedirectPromise:", err);
+        showToast("❌ Falha na autenticação. Tente novamente.", "error");
+      })
+      .finally(() => {
+        // Esconde o spinner assim que o processamento do redirect termina
+        document.getElementById("loadingOverlay").classList.remove("visible");
+      });
+
+    // Se há hash de redirect na URL, mostra spinner enquanto processa
+    if (window.location.hash.includes("code=") || window.location.hash.includes("error=")) {
+      document.getElementById("loadingOverlay").classList.add("visible");
+    }
 
     async function fazerLogin() {
+      const btn = document.getElementById("loginBtn");
+      btn.disabled = true;
+      btn.innerHTML = `<div class="spinner" style="width:18px;height:18px;border-width:2px;margin:0 auto;"></div>`;
+
       try {
-        const resp = await msalInstance.loginPopup({ scopes: SCOPES });
-        usuarioAtual = resp.account;
-        mostrarUsuario(usuarioAtual);
+        // loginRedirect redireciona a aba atual — sem popup, sem problema no GitHub Pages
+        await msalInstance.loginRedirect({ scopes: SCOPES });
+        // A execução para aqui; o navegador vai redirecionar para o Azure
       } catch (e) {
-        console.error("Erro no login:", e);
-        showToast("❌ Login cancelado ou falhou.", "error");
+        console.error("Erro ao iniciar login:", e);
+        showToast("❌ Não foi possível iniciar o login.", "error");
+        btn.disabled = false;
+        btn.innerHTML = `
+          <svg width="20" height="20" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg">
+            <rect x="1" y="1" width="9" height="9" fill="#F25022"/>
+            <rect x="11" y="1" width="9" height="9" fill="#7FBA00"/>
+            <rect x="1" y="11" width="9" height="9" fill="#00A4EF"/>
+            <rect x="11" y="11" width="9" height="9" fill="#FFB900"/>
+          </svg>
+          Entrar com Microsoft`;
       }
     }
 
     function fazerLogout() {
-      msalInstance.logoutPopup({ account: usuarioAtual });
+      msalInstance.logoutRedirect({
+        account: usuarioAtual,
+        postLogoutRedirectUri: redirectUri
+      });
       usuarioAtual = null;
-      document.getElementById("userBar").classList.remove("visible");
-      document.getElementById("formScreen").classList.remove("visible");
-      document.getElementById("loginScreen").style.display = "block";
     }
 
     function mostrarUsuario(account) {
@@ -448,8 +513,9 @@
         const resp = await msalInstance.acquireTokenSilent({ scopes: SCOPES, account: usuarioAtual });
         return resp.accessToken;
       } catch {
-        const resp = await msalInstance.acquireTokenPopup({ scopes: SCOPES });
-        return resp.accessToken;
+        // Se o silent falhar, usa redirect (sem popup)
+        await msalInstance.acquireTokenRedirect({ scopes: SCOPES, account: usuarioAtual });
+        // Execução para aqui — o navegador vai redirecionar
       }
     }
 
@@ -477,6 +543,7 @@
 
       try {
         const token = await getToken();
+        if (!token) return; // acquireTokenRedirect vai redirecionar — interrompe aqui
 
         await fetch(WEBHOOK, {
           method: 'POST',
