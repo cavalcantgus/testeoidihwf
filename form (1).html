@@ -788,6 +788,16 @@
             </select>
           </div>
         </div>
+
+        <div class="field">
+          <label for="acao">Ação <span class="req">*</span></label>
+
+          <div class="select-wrap">
+            <select id="acao">
+              <option value="" disabled selected>Selecione um setor primeiro</option>
+            </select>
+          </div>
+        </div>
       </div>
 
       <div class="field">
@@ -834,6 +844,120 @@
     const SCOPES = ["User.Read", "https://graph.microsoft.com/Sites.ReadWrite.All"];
     const redirectUri = window.location.origin + window.location.pathname;
 
+    const selectedSector = document.getElementById("setor");
+    const actionSelect = document.getElementById("acao");
+
+    const setores = [
+      {
+        setor: "Acadêmico",
+        opcoes: [
+          "Questoes",
+          "Simulados",
+          "Conteudos",
+          "Gabaritos",
+          "Todas as opções",
+          "Outros"
+        ]
+      },
+      {
+        setor: "Tecnologia",
+        opcoes: [
+          "Acessos á ferramentas/sistemas",
+          "Criação de nova ferramenta/sistema",
+          "Ajustes",
+          "Todas as opções",
+          "Outros"
+        ]
+      },
+      {
+        setor: "Comercial",
+        opcoes: [
+          "Lead",
+          "CRM",
+          "Relatorios",
+          "Atendimentos",
+          "Todas as opções",
+          "Outros"
+        ]
+      },
+      {
+        setor: "Marketing",
+        opcoes: [
+          "Post",
+          "Copy",
+          "Campanha",
+          "Conteudo",
+          "Todas as opções",
+          "Outros"
+        ]
+      },
+      {
+        setor: "Administrativo",
+        opcoes: [
+          "Beneficios",
+          "Folha de pagamento",
+          "Pagamento",
+          "Nota fiscal",
+          "Contrato",
+          "Analise juridica",
+          "LGPD",
+          "Ferias",
+          "Todas as opções",
+          "Outros"
+        ]
+      },
+      {
+        setor: "Financeiro",
+        opcoes: []
+      },
+      {
+        setor: "RH",
+        opcoes: []
+      },
+      {
+        setor: "Jurídico",
+        opcoes: []
+      },
+      {
+        setor: "Contábil",
+        opcoes: []
+      }
+    ];
+
+    setores.forEach(item => {
+      const option = document.createElement("option");
+
+      option.value = item.setor;
+      option.textContent = item.setor;
+
+      selectedSector.appendChild(option);
+    });
+
+    selectedSector.addEventListener("change", function () {
+      const setorSelecionado = this.value;
+
+      const setorEncontrado = setores.find(
+        item => item.setor === setorSelecionado
+      );
+
+      // limpa ações
+      actionSelect.innerHTML = `
+      <option value="" disabled selected>
+        Selecione
+      </option>
+    `;
+
+      // renderiza ações
+      setorEncontrado.opcoes.forEach(opcao => {
+        const option = document.createElement("option");
+
+        option.value = opcao;
+        option.textContent = opcao;
+
+        actionSelect.appendChild(option);
+      });
+    });
+
     const msalInstance = new msal.PublicClientApplication({
       auth: { clientId: CLIENT_ID, authority: `https://login.microsoftonline.com/${TENANT_ID}`, redirectUri },
       cache: { cacheLocation: "localStorage", storeAuthStateInCookie: false }
@@ -853,6 +977,9 @@
       })
       .catch(err => { console.error(err); showToast("Falha na autenticação.", "error"); })
       .finally(() => document.getElementById("loadingOverlay").classList.remove("visible"));
+
+
+    mostrarFormulario(usuarioAtual);
 
     if (window.location.hash.includes("code=") || window.location.hash.includes("error=")) {
       document.getElementById("loadingOverlay").classList.add("visible");
@@ -907,6 +1034,7 @@
     async function enviar() {
       const titulo = document.getElementById('titulo').value.trim();
       const setor = document.getElementById('setor').value;
+      const acao = document.getElementById('acao').value;
       const descricao = document.getElementById('descricao').value.trim();
       const prioridade = document.querySelector('input[name="prioridade"]:checked')?.value;
 
