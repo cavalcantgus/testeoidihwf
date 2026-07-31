@@ -762,15 +762,11 @@
     <div class="form-main">
       <div class="form-header">
         <div class="tag">Novo chamado</div>
-        <h1>Abertura de Solicitação</h1>
-        <p>Preencha os campos abaixo para registrar sua solicitação.</p>
+        <h2>Informações do Solicitante</h1>
+          <p>Preencha os campos abaixo com os dados da sua solicitação.</p>
       </div>
 
       <div class="row-2">
-        <div class="field">
-          <label for="titulo">Título <span class="req">*</span></label>
-          <input type="text" id="titulo" placeholder="Descreva brevemente o problema" />
-        </div>
         <div class="field">
           <label for="setor">Setor <span class="req">*</span></label>
           <div class="select-wrap">
@@ -781,20 +777,32 @@
         </div>
 
         <div class="field">
-          <label for="acao">Ação <span class="req">*</span></label>
-
-          <div class="select-wrap">
-            <select id="acao">
-              <option value="" disabled selected>Selecione um setor primeiro</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="field">
           <label for="gestor">Gestor Imediato <span class="req">*</span></label>
 
           <div class="select-wrap">
             <select id="gestor">
+              <option value="" disabled selected>Selecione um setor primeiro</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-header">
+        <h2>Informações da Solicitação</h1>
+          <p>Preencha os campos abaixo descrevendo sua solicitação.</p>
+      </div>
+
+      <div class="row-2">
+        <div class="field">
+          <label for="titulo">Título <span class="req">*</span></label>
+          <input type="text" id="titulo" placeholder="Descreva brevemente o problema" />
+        </div>
+
+        <div class="field">
+          <label for="acao">Ação <span class="req">*</span></label>
+
+          <div class="select-wrap">
+            <select id="acao">
               <option value="" disabled selected>Selecione um setor primeiro</option>
             </select>
           </div>
