@@ -774,9 +774,9 @@
         <div class="field">
           <label for="setor">Setor <span class="req">*</span></label>
           <div class="select-wrap">
-           <select id="setor">
-  <option value="" disabled selected>Selecione</option>
-</select>
+            <select id="setor">
+              <option value="" disabled selected>Selecione</option>
+            </select>
           </div>
         </div>
 
@@ -785,6 +785,16 @@
 
           <div class="select-wrap">
             <select id="acao">
+              <option value="" disabled selected>Selecione um setor primeiro</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="gestor">Gestor Imediato <span class="req">*</span></label>
+
+          <div class="select-wrap">
+            <select id="gestor">
               <option value="" disabled selected>Selecione um setor primeiro</option>
             </select>
           </div>
@@ -837,7 +847,22 @@
 
     const selectedSector = document.getElementById("setor");
     const actionSelect = document.getElementById("acao");
+    const gestorSelect = document.getElementById("gestor")
 
+    const gestores = [
+      {
+        gestor: "Hugo Messias",
+        email: "hugomessias@omarcosmaluf.com"
+      },
+      {
+        gestor: "Nilcilene Cunha",
+        email: "nilcilene@omarcosmaluf.com"
+      },
+      {
+        gestor: "Wemerson",
+        email: "wemerson@omarcosmaluf.com"
+      },
+    ]
     const setores = [
       {
         setor: "Acadêmico",
@@ -920,7 +945,22 @@
         Selecione
       </option>
     `;
-    
+
+    gestorSelect.innerHTML = `
+      <option value="" disabled selected>
+        Selecione
+      </option>
+    `;
+
+    gestores.forEach(item => {
+      const option = document.createElement("option");
+
+      option.value = item.email;
+      option.textContent = item.gestor;
+
+      selectedSector.appendChild(option);
+    });
+
     setores.forEach(item => {
       const option = document.createElement("option");
 
@@ -1032,6 +1072,7 @@
       const titulo = document.getElementById('titulo').value.trim();
       const setor = document.getElementById('setor').value;
       const acao = document.getElementById('acao').value;
+      const gestor = document.getElementById('gestor').value
       const descricao = document.getElementById('descricao').value.trim();
       const prioridade = document.querySelector('input[name="prioridade"]:checked')?.value;
 
