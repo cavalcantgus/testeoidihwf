@@ -1029,8 +1029,6 @@
       .finally(() => document.getElementById("loadingOverlay").classList.remove("visible"));
 
 
-    mostrarFormulario(usuarioAtual);
-
     if (window.location.hash.includes("code=") || window.location.hash.includes("error=")) {
       document.getElementById("loadingOverlay").classList.add("visible");
     }
