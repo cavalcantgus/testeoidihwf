@@ -815,7 +815,7 @@
             </select>
           </div>
         </div>
-        
+
         <div class="field">
         <label>Prioridade <span class="req">*</span></label>
         <div class="pills">
@@ -968,6 +968,12 @@
     ];
 
     selectedSector.innerHTML = `
+      <option value="" disabled selected>
+        Selecione
+      </option>
+    `;
+
+    selectedSectorResponsavel.innerHTML = `
       <option value="" disabled selected>
         Selecione
       </option>
