@@ -790,9 +790,20 @@
       </div>
 
       <div class="row-2">
+        
+
         <div class="field">
           <label for="titulo">Título <span class="req">*</span></label>
           <input type="text" id="titulo" placeholder="Descreva brevemente o problema" />
+        </div>
+
+        <div class="field">
+          <label for="setor">Setor <span class="req">*</span></label>
+          <div class="select-wrap">
+            <select id="setorResponsavel">
+              <option value="" disabled selected>Selecione</option>
+            </select>
+          </div>
         </div>
 
         <div class="field">
@@ -804,14 +815,8 @@
             </select>
           </div>
         </div>
-      </div>
-
-      <div class="field">
-        <label for="descricao">Descrição <span class="req">*</span></label>
-        <textarea id="descricao" placeholder="Detalhe o problema, contexto e impacto…"></textarea>
-      </div>
-
-      <div class="field">
+        
+        <div class="field">
         <label>Prioridade <span class="req">*</span></label>
         <div class="pills">
           <div class="pill alta">
@@ -828,6 +833,14 @@
           </div>
         </div>
       </div>
+      </div>
+
+      <div class="field">
+        <label for="descricao">Descrição <span class="req">*</span></label>
+        <textarea id="descricao" placeholder="Detalhe o problema, contexto e impacto…"></textarea>
+      </div>
+
+      
 
       <div class="form-footer">
         <span class="hint">* Campos obrigatórios</span>
@@ -851,6 +864,7 @@
     const redirectUri = window.location.origin + window.location.pathname;
 
     const selectedSector = document.getElementById("setor");
+    const selectedSectorResponsavel = document.getElementById("setorResponsavel");
     const actionSelect = document.getElementById("acao");
     const gestorSelect = document.getElementById("gestor")
 
@@ -983,7 +997,7 @@
       selectedSector.appendChild(option);
     });
 
-    selectedSector.addEventListener("change", function () {
+    selectedSectorResponsavel.addEventListener("change", function () {
       const setorSelecionado = this.value;
 
       const setorEncontrado = setores.find(
