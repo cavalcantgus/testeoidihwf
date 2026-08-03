@@ -995,15 +995,17 @@
     });
 
     setores.forEach(item => {
-      const option = document.createElement("option");
+  const option1 = document.createElement("option");
+  option1.value = item.setor;
+  option1.textContent = item.setor;
 
-      option.value = item.setor;
-      option.textContent = item.setor;
+  const option2 = document.createElement("option");
+  option2.value = item.setor;
+  option2.textContent = item.setor;
 
-      selectedSector.appendChild(option);
-      selectedSectorResponsavel.appendChild(option);
-    });
-
+  selectedSector.appendChild(option1);
+  selectedSectorResponsavel.appendChild(option2);
+});
     selectedSectorResponsavel.addEventListener("change", function () {
       const setorSelecionado = this.value;
 
